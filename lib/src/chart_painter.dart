@@ -13,6 +13,7 @@ class PieChartPainter extends CustomPainter {
   final Color chartValueBackgroundColor;
   final double initialAngle;
   final bool showValuesInPercentage;
+  final bool showChartValues;
   final bool showChartValuesOutside;
   final int decimalPlaces;
   final bool showChartValueLabel;
@@ -22,21 +23,18 @@ class PieChartPainter extends CustomPainter {
 
   double _prevAngle = 0;
 
-  PieChartPainter(
-    double angleFactor,
-    this.showChartValuesOutside,
-    List<Color> colorList, {
-    this.chartValueStyle,
-    this.chartValueBackgroundColor,
-    List<double> values,
-    this.initialAngle,
-    this.showValuesInPercentage,
-    this.decimalPlaces,
-    this.showChartValueLabel,
-    this.chartType,
-    this.centerText,
-    this.formatChartValues
-  }) {
+  PieChartPainter(double angleFactor, this.showChartValues,
+      this.showChartValuesOutside, List<Color> colorList,
+      {this.chartValueStyle,
+      this.chartValueBackgroundColor,
+      List<double> values,
+      this.initialAngle,
+      this.showValuesInPercentage,
+      this.decimalPlaces,
+      this.showChartValueLabel,
+      this.chartType,
+      this.centerText,
+      this.formatChartValues}) {
     for (int i = 0; i < values.length; i++) {
       final paint = Paint()..color = getColor(colorList, i);
       if (chartType == ChartType.ring) {
@@ -52,40 +50,42 @@ class PieChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final side = size.width < size.height ? size.width : size.height;
+    final minDimension = size.width < size.height ? size.width : size.height;
     _prevAngle = this.initialAngle;
     for (int i = 0; i < _subParts.length; i++) {
       canvas.drawArc(
-        new Rect.fromLTWH(0.0, 0.0, side, size.height),
+        new Rect.fromLTWH(0.0, 0.0, minDimension, size.height),
         _prevAngle,
         (((_totalAngle) / _total) * _subParts[i]),
         chartType == ChartType.disc ? true : false,
         _paintList[i],
       );
-      final radius = showChartValuesOutside ? side * 0.5 : side / 3;
-      final x = (radius) *
-          math.cos(
-              _prevAngle + ((((_totalAngle) / _total) * _subParts[i]) / 2));
-      final y = (radius) *
-          math.sin(
-              _prevAngle + ((((_totalAngle) / _total) * _subParts[i]) / 2));
-      if (_subParts.elementAt(i).toInt() != 0) {
-        final value = formatChartValues != null 
-            ? formatChartValues(_subParts.elementAt(i)) 
-            : _subParts.elementAt(i).toStringAsFixed(this.decimalPlaces);
-        final name = showValuesInPercentage
-            ? (((_subParts.elementAt(i) / _total) * 100)
-                    .toStringAsFixed(this.decimalPlaces) +
-                '%')
-            : value;
-
-        _drawName(canvas, name, x, y, side);
+      if (showChartValues) {
+        _drawChartValue(canvas, minDimension, _subParts[i]);
       }
       _prevAngle = _prevAngle + (((_totalAngle) / _total) * _subParts[i]);
     }
 
     if (centerText != null && centerText.trim().isNotEmpty) {
-      _drawCenterText(canvas, side);
+      _drawCenterText(canvas, minDimension);
+    }
+  }
+
+  void _drawChartValue(Canvas canvas, double sideLength, double dataValue) {
+    final radius = showChartValuesOutside ? sideLength * 0.5 : sideLength / 3;
+    final x = (radius) *
+        math.cos(_prevAngle + ((((_totalAngle) / _total) * dataValue) / 2));
+    final y = (radius) *
+        math.sin(_prevAngle + ((((_totalAngle) / _total) * dataValue) / 2));
+    if (dataValue.toInt() != 0) {
+      final value = formatChartValues != null
+          ? formatChartValues(dataValue)
+          : dataValue.toStringAsFixed(decimalPlaces);
+      final name = showValuesInPercentage
+          ? "${((dataValue * 100) / _total).toStringAsFixed(decimalPlaces)}%"
+          : value;
+
+      _drawName(canvas, name, x, y, sideLength);
     }
   }
 

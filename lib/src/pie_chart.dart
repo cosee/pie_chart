@@ -50,6 +50,8 @@ class PieChart extends StatefulWidget {
   final double chartLegendSpacing;
   final bool showChartValuesInPercentage;
   final int decimalPlaces;
+
+  /// Show numerical chart values.
   final bool showChartValues;
   final bool showChartValuesOutside;
   final List<Color> colorList;
@@ -138,6 +140,7 @@ class _PieChartState extends State<PieChart>
           child: CustomPaint(
             painter: PieChartPainter(
               _fraction,
+              widget.showChartValues,
               widget.showChartValuesOutside,
               widget.colorList,
               chartValueStyle: widget.chartValueStyle,
@@ -149,7 +152,7 @@ class _PieChartState extends State<PieChart>
               showChartValueLabel: widget.showChartValueLabel,
               chartType: widget.chartType,
               centerText: widget.centerText,
-              formatChartValues: widget.formatChartValues
+              formatChartValues: widget.formatChartValues,
             ),
             child: AspectRatio(aspectRatio: 1),
           ),
