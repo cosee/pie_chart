@@ -23,23 +23,28 @@ class PieChartPainter extends CustomPainter {
 
   double _prevAngle = 0;
 
-  PieChartPainter(double angleFactor, this.showChartValues,
-      this.showChartValuesOutside, List<Color> colorList,
-      {this.chartValueStyle,
-      this.chartValueBackgroundColor,
-      List<double> values,
-      this.initialAngle,
-      this.showValuesInPercentage,
-      this.decimalPlaces,
-      this.showChartValueLabel,
-      this.chartType,
-      this.centerText,
-      this.formatChartValues}) {
+  PieChartPainter(
+    double angleFactor,
+    this.showChartValuesOutside,
+    List<Color> colorList, {
+    double strokeWidth,
+    this.showChartValues,
+    this.chartValueStyle,
+    this.chartValueBackgroundColor,
+    List<double> values,
+    this.initialAngle,
+    this.showValuesInPercentage,
+    this.decimalPlaces,
+    this.showChartValueLabel,
+    this.chartType,
+    this.centerText,
+    this.formatChartValues,
+  }) {
     for (int i = 0; i < values.length; i++) {
       final paint = Paint()..color = getColor(colorList, i);
       if (chartType == ChartType.ring) {
         paint.style = PaintingStyle.stroke;
-        paint.strokeWidth = 20;
+        paint.strokeWidth = strokeWidth;
       }
       _paintList.add(paint);
     }

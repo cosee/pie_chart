@@ -17,6 +17,7 @@ class PieChart extends StatefulWidget {
     this.chartType = ChartType.disc,
     this.chartValueBackgroundColor = Colors.grey,
     this.legendStyle = defaultLegendStyle,
+    this.chartStrokeWidth = 20,
     this.chartRadius,
     this.animationDuration,
     this.chartLegendSpacing = 48,
@@ -45,6 +46,8 @@ class PieChart extends StatefulWidget {
   final LegendPosition legendPosition;
   final ChartType chartType;
 
+  /// Stroke width for ring charts
+  final double chartStrokeWidth;
   final double chartRadius;
   final Duration animationDuration;
   final double chartLegendSpacing;
@@ -140,9 +143,10 @@ class _PieChartState extends State<PieChart>
           child: CustomPaint(
             painter: PieChartPainter(
               _fraction,
-              widget.showChartValues,
               widget.showChartValuesOutside,
               widget.colorList,
+              showChartValues: widget.showChartValues,
+              strokeWidth: widget.chartStrokeWidth,
               chartValueStyle: widget.chartValueStyle,
               chartValueBackgroundColor: widget.chartValueBackgroundColor,
               values: legendValues,
