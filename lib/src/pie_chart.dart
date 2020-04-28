@@ -61,7 +61,7 @@ class PieChart extends StatefulWidget {
   final bool showLegends;
   final double initialAngle;
   final Function formatChartValues;
-  final String centerText;
+  final TextSpan centerText;
 
   @override
   _PieChartState createState() => _PieChartState();

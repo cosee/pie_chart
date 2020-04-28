@@ -18,7 +18,7 @@ class PieChartPainter extends CustomPainter {
   final int decimalPlaces;
   final bool showChartValueLabel;
   final ChartType chartType;
-  final String centerText;
+  final TextSpan centerText;
   final Function formatChartValues;
 
   double _prevAngle = 0;
@@ -71,7 +71,7 @@ class PieChartPainter extends CustomPainter {
       _prevAngle = _prevAngle + (((_totalAngle) / _total) * _subParts[i]);
     }
 
-    if (centerText != null && centerText.trim().isNotEmpty) {
+    if (centerText != null) {
       _drawCenterText(canvas, minDimension);
     }
   }
@@ -86,11 +86,15 @@ class PieChartPainter extends CustomPainter {
       final value = formatChartValues != null
           ? formatChartValues(dataValue)
           : dataValue.toStringAsFixed(decimalPlaces);
-      final name = showValuesInPercentage
+      final String name = showValuesInPercentage
           ? "${((dataValue * 100) / _total).toStringAsFixed(decimalPlaces)}%"
           : value;
 
-      _drawName(canvas, name, x, y, sideLength);
+      final nameSpan = TextSpan(
+        style: chartValueStyle,
+        text: name,
+      );
+      _drawName(canvas, nameSpan, x, y, sideLength);
     }
   }
 
@@ -98,13 +102,15 @@ class PieChartPainter extends CustomPainter {
     _drawName(canvas, centerText, 0, 0, side);
   }
 
-  void _drawName(Canvas canvas, String name, double x, double y, double side) {
-    TextSpan span = TextSpan(
-      style: chartValueStyle,
-      text: name,
-    );
+  void _drawName(
+    Canvas canvas,
+    TextSpan textSpan,
+    double x,
+    double y,
+    double side,
+  ) {
     TextPainter tp = TextPainter(
-      text: span,
+      text: textSpan,
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
